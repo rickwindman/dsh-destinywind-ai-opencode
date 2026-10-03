@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "OpenCode Subagent",
+    "description": "Bridges the local OpenCode CLI into DSH as a delegated executor: the main AI can call opencode_delegate to hand subtasks (modules, bugfixes, refactors, commands) to the opencode build agent, keeping the main context clean."
+  }
+}

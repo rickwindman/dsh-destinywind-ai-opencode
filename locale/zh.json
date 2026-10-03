@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "opencode子代理",
+    "description": "把本机 OpenCode CLI 接成 DSH 的执行分担工具：主 AI 可调用 opencode_delegate，把子任务（写模块、修 bug、重构、跑命令）交给 opencode 的 build 代理在后台独立完成，主上下文不被中间过程污染。"
+  }
+}
