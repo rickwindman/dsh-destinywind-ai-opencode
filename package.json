@@ -1,0 +1,28 @@
+{
+  "name": "dsh-destinywind-ai-opencode",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "把本机 OpenCode CLI 接成 DSH 的执行分担工具：任务过程中主 AI 可调用 opencode_delegate，把子任务（写模块、修 bug、重构、跑命令）交给 opencode 的 build 代理在后台独立完成，只用一份提示词换回一份结果，主上下文不被中间过程污染。",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  }
+}
