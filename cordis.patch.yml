@@ -1,0 +1,9 @@
+# 把 OpenCode CLI 注册成 DSH 的「执行分担」工具。
+#
+# 本插件不注册任何模型（模型仍由 DSH 自己的 provider 提供），只注册工具：
+# 任务过程中主 AI 调用 opencode_delegate，把子任务交给本机 opencode CLI
+# 的 build 代理独立执行（它能读写文件、跑命令），执行完只把结果文本交回。
+- insert:
+    - id: dsh-destinywind-ai-opencode
+      name: dsh-destinywind-ai-opencode
+      config: {}
