@@ -63,22 +63,31 @@ gh repo clone rickwindman/dsh-destinywind-ai-opencode
 | `agent` | 否 | 执行代理名 |
 | `timeoutMs` | 否 | 本次调用超时 |
 
-## 两个必须踩过的坑（已修，别再改回去）
+## 三个必须踩过的坑（已修，别再改回去）
 
-1. **`stdin` 必须是 `'ignore'`**。`opencode run` 会一直等 stdin 结束才开始干活；
-   默认的 pipe 若没人关闭，进程会静静挂死到超时（本机实测：60 秒零输出）。
-2. **Windows 上必须 `shell: true`**。opencode 的入口通常是 `.cmd` / `.ps1` 包装，
+1. **任务正文必须走 `stdin`**，不能当位置参数。多行 `task` 在 Windows + shell 下会被
+   截断（本机实测只收到第一行之前的内容，opencode 反过来问「内容是什么？」），
+   简单任务甚至会直接挂死到超时。
+2. **`stdin` 写完必须 `end()`**。`opencode run` 会一直等 stdin 结束才开始干活；
+   只开 pipe 不关闭，进程会静静挂死到超时（实测：60 秒零输出）。
+3. **Windows 上必须 `shell: true`**。opencode 的入口通常是 `.cmd` / `.ps1` 包装，
    node 的 `spawn` 不做 PATHEXT 解析：裸名 `.cmd` 会 `EINVAL`，裸名 `opencode` 会 `ENOENT`。
 
-另外 CLI **没有** `--no-color` 选项，误加会导致 exit 1 并打印帮助文本。
+另外两个容易误伤的细节：
+
+- CLI **没有** `--no-color` 选项，误加会导致 exit 1 并打印帮助文本。
+- **工作目录别指望默认值**：不传 `--dir` 时 opencode 继承的是 DSH **宿主进程**的工作目录
+  （本机为 `C:\Users\raoke\.dsh\profiles\desktop`），不是会话工作区。所以本插件按
+  「调用参数 > 插件设置 > 会话工作区 > 进程 cwd」解析，并在结果里回报真实目录。
 
 ## 开发校验
 
 仓库内的实现已通过两层验证（脚本在开发者的 `.probe` 下，未随包发布）：
 
-- 契约层 34 项断言：工具定义符合宿主 `tools.register` 契约、NDJSON 提取、
-  限流识别、参数校验、设置项传导与覆盖优先级
-- 端到端：真实 `spawn` 调起 opencode，`task` 进、结果文本出，`ok=true` / `exitCode=0`
+- 契约层 43 项断言：工具定义符合宿主 `tools.register` 契约、NDJSON 提取、
+  限流识别、参数校验、设置项传导与覆盖优先级、工作目录解析优先级
+- 真机端到端：真实 `spawn` 调起 opencode，给出 `cwd` 与多行任务后，
+  **文件被真实创建**（三行内容逐字正确、UTF-8 无 BOM），`ok=true` / `exitCode=0`
 
 ## License
 
